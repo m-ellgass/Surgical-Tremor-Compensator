@@ -13,7 +13,7 @@ The goal of this project is to create a handheld instrument that mimics the rota
 - 
 
 ## Repository Structure
-- [name here ->] `tremor_compensator/` — main project sketch
+- [name here ->] — main project sketch
 - [name here] — preliminary sketches used during development
   - `MPU6050_Tilt_Angle_Example.ino` — basic IMU reading and angle calculation
   - [name here] — basic servo control test
