@@ -16,4 +16,4 @@ The goal of this project is to create a handheld instrument that mimics the rota
 - [name here ->] — main project sketch
 - `Preliminary_Sketches` — preliminary sketches used during development
   - `MPU6050_Tilt_Angle_Example.ino` — basic IMU reading and angle calculation
-  - [name here] — basic servo control test
+  - `SG90_KY008_UserInput_Example.ino` — basic servo control test via user input with running laser
