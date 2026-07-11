@@ -1,6 +1,6 @@
 /*
   This program is the Unfiltered version such that it does not take into account tremors
-  but note that the pitch calculation uses rolling average to filter out the MPU noise
+  but note that the pitch angle and offset calculations use averaging to filter out noise
   Reads pitch of MPU (rotate along long side axis)
   Maps servo angle to MPU pitch
   Note: Be careful that MPU is in upright (90º) position on upload for calibration
@@ -21,7 +21,7 @@ float pitchOffset = 0;
 float filteredPitch = 0;
 // alpha controls how much weight new reading vs historical average holds in filter/moving average
 // can tune alpha up if response feels too sluggish for intentional motion, or down for more smoothing
-const float alpha = 0.1; // 0.1 means 10% new to 90% history
+const float alpha = 0.3; // 0.3 means 30% new to 70% history
 int pos = 0;  // variable to store servo position
 
 
@@ -32,17 +32,33 @@ void setup() {
   Serial.println(mpu.testConnection() ? "MPU6050 connected" : "Connection failed"); // if connection test passes print connected, otherwise print failed
   serv.attach(9);  // attaches the servo on pin 9 to the Servo object
 
-  int16_t ax, ay, az, gx, gy, gz; // 3 accelerometer values, 3 gyro values
-  mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+  // Start calibration for MPU (pitch) angle offset 0.5s after startup
+  Serial.println("Calibrating... keep MPU still and upright.");
+  delay(500);
+
+  const int numSamples = 50; // number of readings to average
+  float pitchSum = 0;
+
+  for (int i = 0; i < numSamples; i++) {
+    int16_t ax, ay, az, gx, gy, gz; // 3 accelerometer values, 3 gyro values
+    mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
   // Raw accelerometer values are arbitrary integer counts
   // Dividing by 16384 converts them to units of g (gravitational acceleration)
-  float axg = ax / 16384.0;
-  float ayg = ay / 16384.0;
-  float azg = az / 16384.0;
+    float axg = ax / 16384.0;
+    float ayg = ay / 16384.0;
+    float azg = az / 16384.0;
 
-  // takes one reading at startup to capture chip's resting angle --> stores it as pitch offset
-  pitchOffset = RAD_TO_DEG * atan2(axg, sqrt(ayg * ayg + azg * azg));
+    float pitchSample = RAD_TO_DEG * atan2(axg, sqrt(ayg * ayg + azg * azg));
+    pitchSum += pitchSample;
+
+    delay(10); // small gap between samples
+  }
+
+  // pitch offset is average of all samples taken
+  pitchOffset = pitchSum / numSamples; 
+  Serial.print("Calibration complete. Offset: ");
+  Serial.println(pitchOffset);
 }
 
 void loop() {
