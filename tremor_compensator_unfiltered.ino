@@ -3,7 +3,7 @@
   but note that the pitch angle and offset calculations use averaging to filter out noise
   Reads pitch of MPU (rotate along long side axis)
   Maps servo angle to MPU pitch
-  Note: Be careful that MPU is in upright (90º) position on upload for calibration
+  Note: Be careful that MPU is in upright (90 deg) position on upload for calibration
   Also note that SG90 doesn't have decimal precision
 */
 
@@ -17,6 +17,7 @@ MPU6050 mpu;
 Servo serv;
 
 // Global Variables
+#define LASER_PIN 5 // define digital pin connected to laser pointer
 float pitchOffset = 0; 
 float filteredPitch = 0;
 // alpha controls how much weight new reading vs historical average holds in filter/moving average
@@ -31,6 +32,7 @@ void setup() {
   mpu.initialize(); // wakes up MPU6050
   Serial.println(mpu.testConnection() ? "MPU6050 connected" : "Connection failed"); // if connection test passes print connected, otherwise print failed
   serv.attach(9);  // attaches the servo on pin 9 to the Servo object
+  pinMode(LASER_PIN, OUTPUT);  // configures laser pointer pin as an output
 
   // Start calibration for MPU (pitch) angle offset 0.5s after startup
   Serial.println("Calibrating... keep MPU still and upright.");
@@ -76,8 +78,11 @@ void loop() {
   // Each new filtered value is a blend of the current raw reading (weighted by alpha -- 10%) and the previous filtered value (weighted by 1-alpha -- 90%).
   filteredPitch = alpha * pitch + (1 - alpha) * filteredPitch;
   pos = round(filteredPitch); // round pitch (otherwise map function auto-truncates)
-  pos = map(pos, -90, 90, 0, 180);
+  pos = map(pos, -80, 80, 180, 0);
   pos = constrain(pos, 0, 180);
+
+  // Turn on laser pointer
+  digitalWrite(LASER_PIN, HIGH);
 
   // Map servo angle
   serv.write(pos);
