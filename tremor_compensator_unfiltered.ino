@@ -88,10 +88,11 @@ void loop() {
   serv.write(pos);
 
   // Print current MPU pitch and mapped angle
-  Serial.print("Pitch:");
+  Serial.print("Unfiltered:");
+  Serial.print(pitch);
+  Serial.print(", Pitch:");
   Serial.print(filteredPitch);
-  Serial.print(", ");
-  Serial.print("Servo_Angle:");
+  Serial.print(", Servo_Angle:");
   Serial.println(pos);
 
   delay(100);
