@@ -1,6 +1,6 @@
 /*
-  This program is the Unfiltered version such that it does not take into account tremors
-  but note that the pitch angle and offset calculations use averaging to filter out noise
+  This program is the Unfiltered version such that it does not take into account tremors or component noise*
+  *note that averaging is used for offset calibration purposes (not a real-time filter)
   Reads pitch of MPU (rotate along long side axis)
   Maps servo angle to MPU pitch
   Note: Be careful that MPU is in upright (90 deg) position on upload for calibration
@@ -19,12 +19,7 @@ Servo serv;
 // Global Variables
 #define LASER_PIN 5 // define digital pin connected to laser pointer
 float pitchOffset = 0; 
-float filteredPitch = 0;
-// alpha controls how much weight new reading vs historical average holds in filter/moving average
-// can tune alpha up if response feels too sluggish for intentional motion, or down for more smoothing
-const float alpha = 0.3; // 0.3 means 30% new to 70% history
 int pos = 0;  // variable to store servo position
-
 
 void setup() {
   Serial.begin(115200); // serial connection at 115200 baud (relatively arbitrary choice but 115200 is a good habit for more data-intensive projects)
@@ -73,11 +68,8 @@ void loop() {
 
   // Calculate tilt angles in degrees (same way as offset values were calculated above) then subtract offset calculated at startup
   float pitch = RAD_TO_DEG * atan2(axg, sqrt(ayg * ayg + azg * azg)) - pitchOffset;
-
-  // Exponential Moving Average Filter (otherwise noise causes numbers to change frequently even at stable position)
-  // Each new filtered value is a blend of the current raw reading (weighted by alpha -- 10%) and the previous filtered value (weighted by 1-alpha -- 90%).
-  filteredPitch = alpha * pitch + (1 - alpha) * filteredPitch;
-  pos = round(filteredPitch); // round pitch (otherwise map function auto-truncates)
+  
+  pos = round(pitch); // round pitch (otherwise map function auto-truncates)
   pos = map(pos, -80, 80, 0, 180); // will match if servo points up at 90 deg and mpu wires on left side
   pos = constrain(pos, 0, 180);
 
@@ -88,10 +80,8 @@ void loop() {
   serv.write(pos);
 
   // Print current MPU pitch and mapped angle
-  Serial.print("Unfiltered:");
+  Serial.print("Pitch:");
   Serial.print(pitch);
-  Serial.print(", Pitch:");
-  Serial.print(filteredPitch);
   Serial.print(", Servo_Angle:");
   Serial.println(pos);
 
