@@ -78,7 +78,7 @@ void loop() {
   // Each new filtered value is a blend of the current raw reading (weighted by alpha -- 10%) and the previous filtered value (weighted by 1-alpha -- 90%).
   filteredPitch = alpha * pitch + (1 - alpha) * filteredPitch;
   pos = round(filteredPitch); // round pitch (otherwise map function auto-truncates)
-  pos = map(pos, -80, 80, 180, 0);
+  pos = map(pos, -80, 80, 0, 180); // will match if servo points up at 90 deg and mpu wires on left side
   pos = constrain(pos, 0, 180);
 
   // Turn on laser pointer
