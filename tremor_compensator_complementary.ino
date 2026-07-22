@@ -21,7 +21,7 @@ Servo serv;
 #define LASER_PIN 5 // define digital pin connected to laser pointer
 float pitchOffset = 0; 
 float filteredPitch = 0;
-unsigned long lastTime = millis(); // time for gyro integration
+unsigned long lastTime = 0;
 // const float alpha = 0.15; // alpha is redundant in the complementary filter (alpha = 1 - beta)
 const float beta = 0.9; // beta controls gyro and accel weight simultaneously (0.9 means 90% gyro to 10% accel)
 int pos = 0;  // variable to store servo position
@@ -34,6 +34,7 @@ void setup() {
   Serial.println(mpu.testConnection() ? "MPU6050 connected" : "Connection failed"); // if connection test passes print connected, otherwise print failed
   serv.attach(9);  // attaches the servo on pin 9 to the Servo object
   pinMode(LASER_PIN, OUTPUT);  // configures laser pointer pin as an output
+  lastTime = millis(); // time for gyro integration
 
   // Start calibration for MPU (pitch) angle offset 0.5s after startup
   Serial.println("Calibrating... keep MPU still and upright.");
@@ -76,11 +77,11 @@ void loop() {
   float axg = ax / 16384.0;
   float ayg = ay / 16384.0;
   float azg = az / 16384.0;
-  float gyroY = gY / 131.0; // !! check that this is the right axis
+  float gyroY = gy / 131.0; // !! check that this is the right axis
 
   // Get angle from accelerometer
   // Calculate tilt angles in degrees (same way as offset values were calculated above) then subtract offset calculated at startup
-  float accel_angle = RAD_TO_DEG * atan2(axg, sqrt(ayg * ayg + azg * azg)) - pitchOffset;
+  float pitch = RAD_TO_DEG * atan2(axg, sqrt(ayg * ayg + azg * azg)) - pitchOffset;
 
   /* OLD LOW-PASS FILTER
   // Exponential Moving Average Filter (otherwise noise causes numbers to change frequently even at stable position)
@@ -91,7 +92,11 @@ void loop() {
   pos = constrain(pos, 0, 180);
   */
 
-  // Get angle from gyroscope
+  // New filter
+  filteredPitch = beta * (filteredPitch + gyroY * dt) + (1 - beta) * pitch;
+  pos = round(filteredPitch); // round pitch (otherwise map function auto-truncates)
+  pos = map(pos, -80, 80, 0, 180); // will match if servo points up at 90 deg and mpu wires on left side
+  pos = constrain(pos, 0, 180);
   
   // Turn on laser pointer
   digitalWrite(LASER_PIN, HIGH);
