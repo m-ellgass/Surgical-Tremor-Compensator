@@ -22,7 +22,7 @@ float pitchOffset = 0;
 float filteredPitch = 0;
 // alpha controls how much weight new reading vs historical average holds in filter/moving average
 // can tune alpha up if response feels too sluggish for intentional motion, or down for more smoothing
-const float alpha = 0.1; // 0.1 means 10% new to 90% history
+const float alpha = 0.15; // 0.15 means 15% new to 85% history
 int pos = 0;  // variable to store servo position
 
 
