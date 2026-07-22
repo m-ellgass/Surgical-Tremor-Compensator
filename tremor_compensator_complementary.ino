@@ -21,8 +21,9 @@ Servo serv;
 #define LASER_PIN 5 // define digital pin connected to laser pointer
 float pitchOffset = 0; 
 float filteredPitch = 0;
+unsigned long lastTime = millis(); // time for gyro integration
 // const float alpha = 0.15; // alpha is redundant in the complementary filter (alpha = 1 - beta)
-const float beta = 0.9; 
+const float beta = 0.9; // beta controls gyro and accel weight simultaneously (0.9 means 90% gyro to 10% accel)
 int pos = 0;  // variable to store servo position
 
 
@@ -64,23 +65,34 @@ void setup() {
 }
 
 void loop() {
-  // same process as above -- get mpu accel and gyro values and then convert to units of g for new reading every loop iteration
+  // need change in time (dt) for gyro integration
+  unsigned long currentTime = millis();
+  float dt = (currentTime - lastTime) / 1000.0; // convert ms to seconds
+  lastTime = currentTime;
+  
+  // same process as above -- get mpu accel and gyro values and then convert accel to units of g and gyro to degrees per second
   int16_t ax, ay, az, gx, gy, gz;
   mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
   float axg = ax / 16384.0;
   float ayg = ay / 16384.0;
   float azg = az / 16384.0;
+  float gyroY = gY / 131.0; // !! check that this is the right axis
 
+  // Get angle from accelerometer
   // Calculate tilt angles in degrees (same way as offset values were calculated above) then subtract offset calculated at startup
-  float pitch = RAD_TO_DEG * atan2(axg, sqrt(ayg * ayg + azg * azg)) - pitchOffset;
+  float accel_angle = RAD_TO_DEG * atan2(axg, sqrt(ayg * ayg + azg * azg)) - pitchOffset;
 
+  /* OLD LOW-PASS FILTER
   // Exponential Moving Average Filter (otherwise noise causes numbers to change frequently even at stable position)
   // Each new filtered value is a blend of the current raw reading (weighted by alpha -- 10%) and the previous filtered value (weighted by 1-alpha -- 90%).
   filteredPitch = alpha * pitch + (1 - alpha) * filteredPitch;
   pos = round(filteredPitch); // round pitch (otherwise map function auto-truncates)
   pos = map(pos, -80, 80, 0, 180); // will match if servo points up at 90 deg and mpu wires on left side
   pos = constrain(pos, 0, 180);
+  */
 
+  // Get angle from gyroscope
+  
   // Turn on laser pointer
   digitalWrite(LASER_PIN, HIGH);
 
