@@ -23,7 +23,7 @@ float pitchOffset = 0;
 float filteredPitch = 0;
 unsigned long lastTime = 0;
 // const float alpha = 0.15; // alpha is redundant in the complementary filter (alpha = 1 - beta)
-const float beta = 0.9; // beta controls gyro and accel weight simultaneously (0.9 means 90% gyro to 10% accel)
+const float beta = 0.98; // beta controls gyro and accel weight simultaneously (0.9 means 90% gyro to 10% accel)
 int pos = 0;  // variable to store servo position
 
 
@@ -77,7 +77,7 @@ void loop() {
   float axg = ax / 16384.0;
   float ayg = ay / 16384.0;
   float azg = az / 16384.0;
-  float gyroY = gy / 131.0; // !! check that this is the right axis
+  float gyroY = -(gy / 131.0); // gyro seems to be negative when accel is positive
 
   // Get angle from accelerometer
   // Calculate tilt angles in degrees (same way as offset values were calculated above) then subtract offset calculated at startup
@@ -107,6 +107,8 @@ void loop() {
   // Print current MPU pitch and mapped angle
   Serial.print("Unfiltered:");
   Serial.print(pitch);
+  Serial.print("Gryo:");
+  Serial.print(gyroY * dt);
   Serial.print(", Pitch:");
   Serial.print(filteredPitch);
   Serial.print(", Servo_Angle:");
