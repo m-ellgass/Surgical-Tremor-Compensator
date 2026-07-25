@@ -23,7 +23,7 @@ float pitchOffset = 0;
 float filteredPitch = 0;
 unsigned long lastTime = 0;
 // const float alpha = 0.15; // alpha is redundant in the complementary filter (alpha = 1 - beta)
-const float beta = 0.98; // beta controls gyro and accel weight simultaneously (0.9 means 90% gyro to 10% accel)
+const float beta = 0.98; // beta controls gyro and accel weight simultaneously (0.98 means 98% gyro to 2% accel)
 int pos = 0;  // variable to store servo position
 
 
@@ -37,7 +37,7 @@ void setup() {
   lastTime = millis(); // time for gyro integration
 
   // Start calibration for MPU (pitch) angle offset 0.5s after startup
-  Serial.println("Calibrating... keep MPU still and upright.");
+  Serial.println("Calibrating... keep tool still and upright.");
   delay(500);
 
   const int numSamples = 50; // number of readings to average
