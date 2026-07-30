@@ -9,11 +9,18 @@ The goal of this project is to create a handheld instrument that mimics the rota
 - MPU-6050 IMU
 - SG90 micro servo
 - 650nm laser diode module
-- Breadboard
-- 
+- Breadboard (used two for aesthetic purposes)
+- Green LED
+- 1k \Omega resistor
+- SPDT Slide Switch
+
+## Wiring Diagram
 
 ## Repository Structure
-- [name here ->] — main project sketch
+- `tremor_compensator_FINAL.ino` — demo sketch that allows for toggle between filtered and unfiltered output
+- `tremor_compensator_complementary.ino` - final filtered sketch -- complementary filter on both accelerometer and gyro output
+- `tremor_compensator_low-pass.ino` - first filtered sketch -- exponential moving average (EMA) filter on accelerometer output
+- `tremor_compensator_unfiltered.ino` - raw, unfiltered IMU to servo angle (unfiltered output for final sketch)
 - `Preliminary_Sketches` — preliminary sketches used during development
   - `MPU6050_Tilt_Angle_Example.ino` — basic IMU reading and angle calculation/filtering
   - `SG90_KY008_UserInput_Example.ino` — basic servo control (and laser) test via user input
