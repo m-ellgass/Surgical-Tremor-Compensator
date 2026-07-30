@@ -15,7 +15,7 @@ The goal of this project is to create a handheld instrument that mimics the rota
 - SPDT Slide Switch
 
 ### Wiring Diagram
-<img width="978" height="1132" alt="image" src="https://github.com/user-attachments/assets/ace63ca7-94fb-43b0-90d3-b89e47cd580e" />
+<img src="https://github.com/user-attachments/assets/ace63ca7-94fb-43b0-90d3-b89e47cd580e" width = "40%" />
 
 ## How it Works
 sensor
