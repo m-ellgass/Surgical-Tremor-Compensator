@@ -11,10 +11,17 @@ The goal of this project is to create a handheld instrument that mimics the rota
 - 650nm laser diode module
 - Breadboard (used two for aesthetic purposes)
 - Green LED
-- 1k $\Omega$ resistor
+- 1 kΩ resistor
 - SPDT Slide Switch
 
-## Wiring Diagram
+### Wiring Diagram
+
+## How it Works
+sensor
+filter
+output
+
+## Results
 
 ## Repository Structure
 - `tremor_compensator_FINAL.ino` — demo sketch that allows for toggle between filtered and unfiltered output
