@@ -11,7 +11,7 @@ The goal of this project is to create a handheld instrument that mimics the rota
 - 650nm laser diode module
 - Breadboard (used two for aesthetic purposes)
 - Green LED
-- 1k \Omega resistor
+- 1k $\Omega$ resistor
 - SPDT Slide Switch
 
 ## Wiring Diagram
