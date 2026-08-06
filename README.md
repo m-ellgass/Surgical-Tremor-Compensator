@@ -3,6 +3,7 @@
 The goal of this project is to create a handheld instrument that mimics the rotational motion of the user’s hand, using a filter to remove shakes, tremors, and instrument noise. This is demonstrated via a laser pointer mounted on a servo, which tracks intentional hand motion while filtering out high-frequency tremor. Tremor filtering is a common feature of medical robotic and assistive devices, such as Carnegie Mellon's Micron Handheld Surgical Robot, Intuitive Robotics' da Vinci, Gyrogear's GyroGlove, and numerous others across the industry. The purpose of experimenting with this type of filtering system is to understand the signal processing on a simpler, smaller scale, but with the high-level applications in mind.
 
 ## Demo video
+https://github.com/user-attachments/assets/98885060-1304-4821-b81c-c518528a7d22
 
 ## Hardware
 - Elegoo Mega 2560
@@ -10,6 +11,7 @@ The goal of this project is to create a handheld instrument that mimics the rota
 - SG90 micro servo
 - 650nm laser diode module
 - Breadboard (used two for aesthetic purposes)
+- Pencil (handle for IMU)
 - Green LED
 - 1 kΩ resistor
 - SPDT Slide Switch
