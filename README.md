@@ -20,11 +20,13 @@ https://github.com/user-attachments/assets/98885060-1304-4821-b81c-c518528a7d22
 <img src="https://github.com/user-attachments/assets/ace63ca7-94fb-43b0-90d3-b89e47cd580e" width = "40%" />
 
 ## How it Works
-sensor
-filter
-output
+The tremor compensator instrument gets data input from the IMU chip (MPU 6050), which provides simultaneous accelerometer and gyroscope data. The accelerometer data is converted into tilt angle using trig formulas with gravitational acceleration. Theoretically, this could be translated to calculate both pitch and roll, but for this project, only pitch was calculated. In the unfiltered version, this calculated pitch value is simply mapped to the available servo angles via the built-in Arduino map function. In practice, mapping from -80 to 80 rather than the theoretical -90 to 90 produced more accurate and stable servo response. In the next iteration of the code, the low-pass filter, the raw calculated pitch data is run through an exponential moving average (EMA) filter. The EMA filter puts more weight on previous pitch angles, filtering out high-frequency changes. This filter is solid, but it doesn’t perform well for quick intentional jerks. In the eyes of the accelerometer, vibration, movement, and jitter are seen as acceleration, which adds to short-term noise. Over the long term, however, the accelerometer is stable, which is why filtering out the short-term noise provides a solid smoothing that works well for slow movements. The final filter version implements a complementary filter that takes advantage of the simultaneous gyroscope data to also smooth quick movements. The gyroscope measures rotational rate, which is very smooth and responsive with almost no noise. But to get an angle from it, you have to integrate the rate over time, and any tiny constant error in the rate reading accumulates with each integration step — causing the angle estimate to slowly drift away from reality over time. By weighting the gyroscope heavily for short-term responsiveness and the accelerometer lightly as a long-term drift correction, the two sensors complement each other — the gyroscope provides smooth, accurate tracking of fast intentional movements while the accelerometer continuously corrects for the drift that would otherwise accumulate from integrating the gyroscope rate over time.
 
 ## Results
+pictures from serial plotter
+
+## Future Work
+kalman filter, multidimensional
 
 ## Repository Structure
 - `tremor_compensator_FINAL.ino` — demo sketch that allows for toggle between filtered and unfiltered output
